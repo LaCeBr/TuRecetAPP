@@ -11,7 +11,6 @@ function Archivadas(){
         axios.get('https://tureceptapp-default-rtdb.europe-west1.firebasedatabase.app/Recetas.json')        
         .then((response) => {
             let arrayProductos = [];
-            console.log(response.data);
             for(let key in response.data) {
                 arrayProductos.push({
                     id: key,
