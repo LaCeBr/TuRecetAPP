@@ -1,6 +1,43 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
-import { Card, Button } from '@rneui/themed';
+import { Text, Image, ScrollView, StyleSheet, Alert } from 'react-native';
+import { Card, Button, Icon } from '@rneui/themed';
+import * as SecureStore from 'expo-secure-store';
+
+function chunkString(str, length) {
+    return str.match(new RegExp('.{1,' + length + '}', 'g'));
+}
+
+function showAlert(message) {
+    Alert.alert(message);
+}
+
+async function GuardarReceta(receta, id){
+    try {
+        const recetaString = JSON.stringify(receta);
+        // Dividir la receta en partes más pequeñas
+        const chunks = chunkString(recetaString, 2000); 
+
+        for (let i = 0; i < chunks.length; i++) {
+            await SecureStore.setItemAsync(`${id}_${i}`, chunks[i]);
+        }
+        // Añadir el ID de la receta a la lista de IDs
+        let ids = await SecureStore.getItemAsync('recetas_almacenadas');
+        ids = ids ? JSON.parse(ids) : [];
+        if (!ids.includes(id)) {
+            ids.push(id);
+            await SecureStore.setItemAsync('recetas_almacenadas', JSON.stringify(ids));
+        }
+
+        showAlert('Receta guardada!');
+    } catch (e) {
+        console.log('Error: ', e);
+        showAlert("Error al guardar la receta. Intentelo de nuevo más tarde");
+    }
+}
+
+function comprobarAlmacenajeReceta(id){
+
+}
 
 function DetalleLista({ listado, route, navigation }) {
     const { RecetaId } = route.params;
@@ -9,7 +46,12 @@ function DetalleLista({ listado, route, navigation }) {
 
     useEffect(() => {
         navigation.setOptions({
-            title: receta.titulo
+            title: receta.titulo,
+            headerRight: () => (
+                <Button onPress={() => GuardarReceta(receta, RecetaId)}>
+                    <Icon name="archive-arrow-down" type="material-community" size={30} color="#000" />
+                </Button>
+            ),
         });
     }, [navigation, RecetaId]);
 
