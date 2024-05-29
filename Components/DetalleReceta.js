@@ -41,7 +41,7 @@ function comprobarAlmacenajeReceta(id){
 
 function DetalleLista({ listado, route, navigation }) {
     const { RecetaId } = route.params;
-    const receta = listado[RecetaId];
+    const receta = listado.find(receta => receta.id === RecetaId);
     const instrucciones_ = receta.instrucciones.replace(/\|/g, '\n\n');
 
     useEffect(() => {

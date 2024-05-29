@@ -1,38 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import ListaRecetas from "../../Components/ListaRecetas";
+import * as SecureStore from 'expo-secure-store';
+
+async function RecuperarReceta(id) {
+    let recetaCompleta = '';
+    let i = 0;
+
+    while (true) {
+        const chunk = await SecureStore.getItemAsync(`${id}_${i}`);
+        if (chunk === null) break;
+        recetaCompleta += chunk;
+        i++;
+    }
+    return JSON.parse(recetaCompleta);
+}
+
+async function RecuperarTodasLasRecetas() {
+    let ids = await SecureStore.getItemAsync('recetas_almacenadas');
+    ids = ids ? JSON.parse(ids) : [];
+
+    const recetas = [];
+    for (const id of ids) {
+        const receta = await RecuperarReceta(id);
+        recetas.push({ 
+            id: id, 
+            autor: receta.autor,
+            foto: receta.foto,
+            ingredientes: receta.ingredientes,
+            instrucciones: receta.instrucciones,
+            titulo: receta.titulo,
+            valoracion: receta.valoracion,
+            video: receta.video 
+        });
+    }
+    return recetas;
+}
+
 
 function Archivadas(){
     
-    const [RecetasFirebase, setRecetasFirebase] = useState([]);
-    
+    const [recetas, setRecetas] = useState([]);
+
     useEffect(() => {
-        //Firebase
-        axios.get('https://tureceptapp-default-rtdb.europe-west1.firebasedatabase.app/Recetas.json')        
-        .then((response) => {
-            let arrayProductos = [];
-            for(let key in response.data) {
-                arrayProductos.push({
-                    id: key,
-                    autor: response.data[key].Autor,
-                    foto: response.data[key].Foto,
-                    ingredientes: response.data[key].Ingredientes,
-                    instrucciones: response.data[key].Instrucciones,
-                    titulo: response.data[key].Titulo,
-                    valoracion: response.data[key].Valoracion,
-                    video: response.data[key].Video
-                });
-            }
-            setRecetasFirebase(arrayProductos);
-        })
-        .catch((error) => {
-            setRecetasFirebase([]);
-            console.error('No se ha podido acceder:', error);
-        });
+        const fetchRecetas = async () => {
+            const todasLasRecetas = await RecuperarTodasLasRecetas();
+            setRecetas(todasLasRecetas);
+        };
+
+        fetchRecetas();
     }, []);
 
     return (
-        <ListaRecetas listado={RecetasFirebase} />
+        <ListaRecetas listado={recetas} />
     );
 }
 
