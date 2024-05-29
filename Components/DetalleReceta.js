@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Text, Image, ScrollView, StyleSheet, Alert } from 'react-native';
+import { Text, Image, ScrollView, StyleSheet, Alert, View } from 'react-native';
 import { Card, Button, Icon } from '@rneui/themed';
 import * as SecureStore from 'expo-secure-store';
 
@@ -35,6 +35,34 @@ async function GuardarReceta(receta, id){
     }
 }
 
+async function EliminarReceta(id){
+    try {
+        // Eliminar la receta de SecureStore
+        let ids = await SecureStore.getItemAsync('recetas_almacenadas');
+        ids = ids ? JSON.parse(ids) : [];
+        const filteredIds = ids.filter(item => item !== id);
+        await SecureStore.deleteItemAsync('recetas_almacenadas');
+        if (filteredIds.length > 0) {
+            await SecureStore.setItemAsync('recetas_almacenadas', JSON.stringify(filteredIds));
+        }
+
+        // Eliminar las partes de la receta
+        let i = 0;
+        while (true) {
+            const key = `${id}_${i}`;
+            const value = await SecureStore.getItemAsync(key);
+            if (value === null) break;
+            await SecureStore.deleteItemAsync(key);
+            i++;
+        }
+
+        showAlert('Receta eliminada!');
+    } catch (e) {
+        console.log('Error: ', e);
+        showAlert("Error al eliminar la receta. Intentelo de nuevo más tarde");
+    }
+}
+
 function comprobarAlmacenajeReceta(id){
 
 }
@@ -48,9 +76,14 @@ function DetalleLista({ listado, route, navigation }) {
         navigation.setOptions({
             title: receta.titulo,
             headerRight: () => (
-                <Button onPress={() => GuardarReceta(receta, RecetaId)}>
-                    <Icon name="archive-arrow-down" type="material-community" size={30} color="#000" />
-                </Button>
+                <View>
+                    <Button onPress={() => GuardarReceta(receta, RecetaId)}>
+                        <Icon name="archive-arrow-down" type="material-community" size={30} color="#000" />
+                    </Button>
+                    <Button onPress={() => EliminarReceta(RecetaId)}>
+                        <Icon name="file-remove" type="material-community" size={30} color="#000" />
+                    </Button>
+                </View>
             ),
         });
     }, [navigation, RecetaId]);
