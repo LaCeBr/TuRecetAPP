@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ListaRecetas from "../../Components/ListaRecetas";
+import { Text } from 'react-native';
 
 function MisCreaciones(){
     
@@ -35,13 +36,18 @@ function MisCreaciones(){
         })
         .catch((error) => {
             setRecetasFirebase([]);
-            console.error('No se ha podido acceder:', error);
         });
     }, []);
-
-    return (
-        <ListaRecetas listado={RecetasFirebase} />
-    );
+    
+    if (RecetasFirebase.length==0){
+        return(
+            <Text style={{margin:"auto"}}>No hay conexión con la base de datos</Text>
+        )
+    }else{
+        return (
+            <ListaRecetas listado={RecetasFirebase} />
+        );        
+    }
 }
 
 export default MisCreaciones;

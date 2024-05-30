@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Text, Image, ScrollView, StyleSheet, Alert, View } from 'react-native';
 import { Card, Button, Icon } from '@rneui/themed';
 import * as SecureStore from 'expo-secure-store';
+import * as Print from 'expo-print';
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
 
 function chunkString(str, length) {
     return str.match(new RegExp('.{1,' + length + '}', 'g'));
@@ -11,16 +14,15 @@ function showAlert(message) {
     Alert.alert(message);
 }
 
-async function GuardarReceta(receta, id){
+async function GuardarReceta(receta, id) {
     try {
         const recetaString = JSON.stringify(receta);
-        // Dividir la receta en partes más pequeñas
-        const chunks = chunkString(recetaString, 2000); 
+        const chunks = chunkString(recetaString, 2000);
 
         for (let i = 0; i < chunks.length; i++) {
             await SecureStore.setItemAsync(`${id}_${i}`, chunks[i]);
         }
-        // Añadir el ID de la receta a la lista de IDs
+
         let ids = await SecureStore.getItemAsync('recetas_almacenadas');
         ids = ids ? JSON.parse(ids) : [];
         if (!ids.includes(id)) {
@@ -35,9 +37,8 @@ async function GuardarReceta(receta, id){
     }
 }
 
-async function EliminarReceta(id){
+async function EliminarReceta(id) {
     try {
-        // Eliminar la receta de SecureStore
         let ids = await SecureStore.getItemAsync('recetas_almacenadas');
         ids = ids ? JSON.parse(ids) : [];
         const filteredIds = ids.filter(item => item !== id);
@@ -46,7 +47,6 @@ async function EliminarReceta(id){
             await SecureStore.setItemAsync('recetas_almacenadas', JSON.stringify(filteredIds));
         }
 
-        // Eliminar las partes de la receta
         let i = 0;
         while (true) {
             const key = `${id}_${i}`;
@@ -63,34 +63,107 @@ async function EliminarReceta(id){
     }
 }
 
-function comprobarAlmacenajeReceta(id){
+async function descargarPDF(receta) {
+    const htmlContent = `
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, Helvetica, sans-serif;
+                    line-height: 1.6;
+                }
+                .title {
+                    font-size: 24px;
+                    font-weight: bold;
+                }
+                .subTitle {
+                    font-size: 18px;
+                    margin-bottom: 5px;
+                }
+                .header {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin: 10px 0;
+                }
+                .ingredient {
+                    font-size: 16px;
+                    margin-bottom: 2px;
+                }
+                .instructions {
+                    font-size: 16px;
+                    margin: 10px 0;
+                    text-align: justify;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="title">${receta.titulo}</div>
+            <img src="${receta.foto}" style="width: 100%; height: auto;" />
+            <div class="subTitle">Autor: ${receta.autor}</div>
+            <div class="subTitle">Valoración: ${receta.valoracion ? `${receta.valoracion} / 5` : 'Sin valorar'}</div>
+            <div class="header">Ingredientes:</div>
+            ${Object.keys(receta.ingredientes).map(key => `
+                <div class="ingredient">${key}: ${receta.ingredientes[key]}</div>
+            `).join('')}
+            <div class="header">Instrucciones:</div>
+            <div class="instructions">${receta.instrucciones.replace(/\|/g, '<br><br>')}</div>
+        </body>
+        </html>
+    `;
 
+    try {
+        const { uri } = await Print.printToFileAsync({ html: htmlContent });
+
+        // Generar el nombre de archivo
+        const fileName = `${receta.titulo.replace(/\s+/g, '_').toLowerCase()}.pdf`;
+        const newUri = `${FileSystem.documentDirectory}${fileName}`;
+
+        // Mover el archivo generado al nuevo nombre
+        await FileSystem.moveAsync({
+            from: uri,
+            to: newUri,
+        });
+
+        const permission = await MediaLibrary.requestPermissionsAsync();
+        if (permission.granted) {
+            const asset = await MediaLibrary.createAssetAsync(newUri);
+            await MediaLibrary.createAlbumAsync('Download', asset, false);
+            showAlert('PDF descargado correctamente');
+        } else {
+            showAlert('Permiso para acceder al almacenamiento denegado');
+        }
+    } catch (error) {
+        console.error('Error al generar el PDF:', error);
+        showAlert('Error al generar el archivo PDF.');
+    }
 }
 
 function DetalleLista({ listado, route, navigation }) {
     const { RecetaId } = route.params;
     const receta = listado.find(receta => receta.id === RecetaId);
     const instrucciones_ = receta.instrucciones.replace(/\|/g, '\n\n');
+    const scrollViewRef = useRef(null);
 
     useEffect(() => {
         navigation.setOptions({
-            title: receta.titulo,
-            headerRight: () => (
-                <View>
-                    <Button onPress={() => GuardarReceta(receta, RecetaId)}>
-                        <Icon name="archive-arrow-down" type="material-community" size={30} color="#000" />
-                    </Button>
-                    <Button onPress={() => EliminarReceta(RecetaId)}>
-                        <Icon name="file-remove" type="material-community" size={30} color="#000" />
-                    </Button>
-                </View>
-            ),
+            title: receta.titulo
         });
     }, [navigation, RecetaId]);
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} ref={scrollViewRef}>
             <Card>
+                <View style={{ flexDirection: 'row', paddingBottom: 10, marginLeft: "auto" }}>
+                    <Button onPress={() => GuardarReceta(receta, RecetaId)}>
+                        <Icon name="archive-arrow-down" type="material-community" size={30} color="#000" />
+                    </Button>
+                    <Button onPress={() => EliminarReceta(RecetaId)}>
+                        <Icon name="archive" type="material-community" size={30} color="#000" />
+                    </Button>
+                    <Button onPress={() => descargarPDF(receta)}>
+                        <Icon name="file-download" type="material-community" size={30} color="#000" />
+                    </Button>
+                </View>
                 <Image source={{ uri: receta.foto }} style={styles.image} />
                 <Text style={styles.subTitle}>Autor: {receta.autor}</Text>
                 <Text style={styles.subTitle}>Valoración: {receta.valoracion ? `${receta.valoracion} / 5` : 'Sin valorar'}</Text>
