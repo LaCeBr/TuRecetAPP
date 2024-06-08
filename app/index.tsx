@@ -1,20 +1,17 @@
 import * as React from 'react';
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import MisCreaciones from "./tabs/MisCreaciones";
-import MenuPrincipal from "./tabs/MenuPrincipal";
-import Archivadas from "./tabs/Archivadas";
+import { ConfigureStore } from '../Redux/ConfigureStore';
+import { Provider } from 'react-redux';
+import CampoBase from '../Components/CampoBase';
 
-const Tab = createMaterialTopTabNavigator();
+const store = ConfigureStore();
 
 export default function Index() {
   return (
-    <SafeAreaProvider>
-      <Tab.Navigator>
-        <Tab.Screen name="Menu" component={MenuPrincipal} />
-        <Tab.Screen name="Mis Creaciones" component={MisCreaciones} />
-        <Tab.Screen name="Archivo" component={Archivadas} />
-      </Tab.Navigator>
-    </SafeAreaProvider>    
+    <Provider store={store}>  
+      <SafeAreaProvider>
+        <CampoBase/>
+      </SafeAreaProvider>   
+    </Provider> 
   );
 }
