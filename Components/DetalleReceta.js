@@ -5,6 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 import * as Print from 'expo-print';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
+import Rating from './Rating';
 
 function chunkString(str, length) {
     return str.match(new RegExp('.{1,' + length + '}', 'g'));
@@ -100,7 +101,6 @@ async function descargarPDF(receta) {
             <div class="title">${receta.titulo}</div>
             <img src="${receta.foto}" style="width: 100%; height: auto;" />
             <div class="subTitle">Autor: ${receta.autor}</div>
-            <div class="subTitle">Valoración: ${receta.valoracion ? `${receta.valoracion} / 5` : 'Sin valorar'}</div>
             <div class="header">Ingredientes:</div>
             ${Object.keys(receta.ingredientes).map(key => `
                 <div class="ingredient">${key}: ${receta.ingredientes[key]}</div>
@@ -166,7 +166,13 @@ function DetalleLista({ listado, route, navigation }) {
                 </View>
                 <Image source={{ uri: receta.foto }} style={styles.image} />
                 <Text style={styles.subTitle}>Autor: {receta.autor}</Text>
-                <Text style={styles.subTitle}>Valoración: {receta.valoracion ? `${receta.valoracion} / 5` : 'Sin valorar'}</Text>
+                <Text style={styles.subTitle}>
+                    Valoración: {receta.valoracion ? (
+                        <Rating rating={receta.valoracion} />
+                    ) : (
+                        'Sin valorar'
+                    )}
+                </Text>
                 <Card.Divider />
                 <Text style={styles.header}>Ingredientes:</Text>
                 {Object.keys(receta.ingredientes).map((key, index) => (

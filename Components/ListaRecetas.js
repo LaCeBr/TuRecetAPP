@@ -1,7 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ListItem, Avatar } from '@rneui/themed';
+import { ListItem, Avatar, Text } from '@rneui/themed';
 import { SafeAreaView, FlatList } from 'react-native';
 import DetalleReceta from "./DetalleReceta";
+import Rating from './Rating';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +18,11 @@ function Lista(props) {
                 <ListItem.Content>
                     <ListItem.Title style={{fontWeight: 'bold'}}>{item.titulo}</ListItem.Title>
                     <ListItem.Subtitle>
-                        {item.valoracion ? `${item.valoracion} / 5` : 'Sin valorar'}
+                    {item.valoracion ? (
+                            <Rating rating={item.valoracion} />
+                        ) : (
+                            <Text>Sin valorar</Text>
+                        )}
                     </ListItem.Subtitle>
                 </ListItem.Content>
             </ListItem>
