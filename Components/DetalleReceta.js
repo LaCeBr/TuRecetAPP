@@ -143,8 +143,7 @@ function DetalleLista({ listado, route, navigation }) {
     const receta = listado.find(receta => receta.id === RecetaId);
     const instrucciones_ = receta.instrucciones.replace(/\|/g, '\n\n');
     const scrollViewRef = useRef(null);
-    
-    const id_lista = "id_"+RecetaId;
+
     const titulo = receta.titulo;
 
     useEffect(() => {
@@ -176,7 +175,7 @@ function DetalleLista({ listado, route, navigation }) {
                     ) : (
                         <Text>Sin Valorar</Text>
                     )}
-                    <Button onPress={() => navigation.navigate('ListaComentarios', { id_lista, titulo })} style={{ marginLeft: 10 }}>
+                    <Button onPress={() => navigation.navigate('ListaComentarios', { RecetaId, titulo })} style={{ marginLeft: 10 }}>
                         <Icon name="comment" size={20}/>
                     </Button>
                 </View>

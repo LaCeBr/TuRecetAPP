@@ -16,10 +16,10 @@ mapStateToProps = state => {
 */
 
 const mapDispatchToProps = dispatch => ({
-    nuevoComentario: (receta_id, usuario_id, valoracion) => dispatch(nuevoComentario(receta_id, usuario_id, valoracion))
+    nuevoComentario: (receta_id, usuario_id, valoracion, Puntuacion) => dispatch(nuevoComentario(receta_id, usuario_id, valoracion, Puntuacion))
 });
 
-const RatingFormulario = ({ toggleModal, RecetaId, nuevoComentario }) => {
+const RatingFormulario = ({ toggleModal, RecetaId, valoracionActual, NumeroValoraciones, nuevoComentario }) => {
     const [rating, setRating] = useState(5);
     const [nombre, setNombre] = useState('Probador');
     const [comentario, setComentario] = useState('');
@@ -37,7 +37,10 @@ const RatingFormulario = ({ toggleModal, RecetaId, nuevoComentario }) => {
             Comentario: comentario,
         };
 
-        nuevoComentario(RecetaId, nombre, valoracion);
+        //Recalculamos valoración
+        const Puntuacion = (valoracionActual*NumeroValoraciones+rating)/(NumeroValoraciones+1);
+
+        nuevoComentario(RecetaId, nombre, valoracion, Puntuacion);
         
         //Valores por defecto y cerrar
         handleCancel();

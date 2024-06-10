@@ -7,7 +7,8 @@ import RatingFormulario from './RatingFormulario';
 
 mapStateToProps = state => { 
     return {  
-        Comentarios: state.Comentarios
+        Comentarios: state.Comentarios,
+        Recetas: state.Recetas
     } 
 }
 
@@ -59,9 +60,17 @@ const ListaComentarios = (props) => {
     };
 
     const { route } = props;
-    const { id_lista, titulo } = route.params;
+    const { RecetaId, titulo } = route.params;
+    const id_lista = "id_"+RecetaId;
     const comentarios = props.Comentarios.comentarios[id_lista];
-    console.log(props.Comentarios.comentarios);
+
+    var valoracion = 0;
+    var Nvaloracion = 0;
+
+    if(comentarios) {
+        valoracion = props.Recetas.recetas[RecetaId].valoracion;
+        Nvaloracion = Object.keys(comentarios).length;
+    }
 
     return(
         <ScrollView ref={useRef(null)}>
@@ -81,7 +90,7 @@ const ListaComentarios = (props) => {
                         justifyContent: 'center',
                         alignItems: 'center',
                         backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
-                        <RatingFormulario toggleModal={toggleModal} RecetaId = {id_lista}/>
+                        <RatingFormulario toggleModal={toggleModal} RecetaId = {RecetaId} valoracionActual={valoracion} NumeroValoraciones={Nvaloracion}/>
                     </View>
                 </Modal> 
             </Card>

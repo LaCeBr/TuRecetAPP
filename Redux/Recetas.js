@@ -8,6 +8,14 @@ export const Recetas = (state = { errMess: null, recetas:[]}, action) => {
         case ActionTypes.RECETAS_FAILED:
             return {...state, isLoading: false, errMess: action.payload};
 
+        case ActionTypes.NUEVA_VALORACION:
+            const { RecetaId, valoracion } = action.payload;
+            return {
+                ...state,
+                recetas: state.recetas.map(receta => 
+                    receta.id === RecetaId ? { ...receta, valoracion: valoracion } : receta
+                )
+            };
         default:
             return state;
     }

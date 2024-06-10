@@ -32,10 +32,63 @@ export const addComentarios = (comentarios) => ({
     payload: comentarios
 });
 
-export const nuevoComentario = (receta_id, usuario_id, valoracion) => ({
-    type: ActionTypes.NUEVO_COMENTARIO,
-    payload: {receta_id, usuario_id, valoracion}
-});
+export const actualizarValoracion = (RecetaId, Valoracion) => {
+    return (dispatch) => {
+        return fetch(`${datosURL}Recetas/${RecetaId}.json`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ Valoracion })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error ' + response.status);
+            }
+            return response.json();
+        })
+        .then(() => {
+            dispatch({
+                type: ActionTypes.NUEVA_VALORACION,
+                payload: { RecetaId, Valoracion }
+            });
+        })
+        .catch(error => {
+            console.error('Error posting comment to Firebase:', error);
+        });
+    };
+};
+
+export const nuevoComentario = (RecetaId, usuario_id, valoracion, Puntuacion) => {
+    return (dispatch) => {
+        const receta_id = "id_" + RecetaId;
+        return fetch(`${datosURL}Comentarios/${receta_id}/${usuario_id}.json`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(valoracion)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            dispatch({
+                type: ActionTypes.NUEVO_COMENTARIO,
+                payload: { receta_id, usuario_id, valoracion }
+            });
+            
+            dispatch(actualizarValoracion(RecetaId, Puntuacion)); 
+        })
+        .catch(error => {
+            console.error('Error posting comment to Firebase:', error);
+        });
+    };
+};
+
 
 export const fetchRecetas = () => (dispatch) => {
     return fetch(datosURL + 'Recetas.json')
