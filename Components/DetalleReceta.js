@@ -143,6 +143,9 @@ function DetalleLista({ listado, route, navigation }) {
     const receta = listado.find(receta => receta.id === RecetaId);
     const instrucciones_ = receta.instrucciones.replace(/\|/g, '\n\n');
     const scrollViewRef = useRef(null);
+    
+    const id_lista = "id_"+RecetaId;
+    const titulo = receta.titulo;
 
     useEffect(() => {
         navigation.setOptions({
@@ -165,14 +168,18 @@ function DetalleLista({ listado, route, navigation }) {
                     </Button>
                 </View>
                 <Image source={{ uri: receta.foto }} style={styles.image} />
-                <Text style={styles.subTitle}>Autor: {receta.autor}</Text>
-                <Text style={styles.subTitle}>
-                    Valoración: {receta.valoracion ? (
+                <Text style={styles.subTitle}>Autor:   {receta.autor}</Text>
+                <Text style={styles.subTitle}>Valoración: </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center',  justifyContent: 'space-between', paddingLeft:50}}>
+                    {receta.valoracion ? (
                         <Rating rating={receta.valoracion} />
                     ) : (
-                        'Sin valorar'
+                        <Text>Sin Valorar</Text>
                     )}
-                </Text>
+                    <Button onPress={() => navigation.navigate('ListaComentarios', { id_lista, titulo })} style={{ marginLeft: 10 }}>
+                        <Icon name="comment" size={20}/>
+                    </Button>
+                </View>
                 <Card.Divider />
                 <Text style={styles.header}>Ingredientes:</Text>
                 {Object.keys(receta.ingredientes).map((key, index) => (

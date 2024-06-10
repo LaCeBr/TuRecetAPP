@@ -3,6 +3,7 @@ import { ListItem, Avatar, Text } from '@rneui/themed';
 import { SafeAreaView, FlatList } from 'react-native';
 import DetalleReceta from "./DetalleReceta";
 import Rating from './Rating';
+import ListaComentarios from './ListaComentarios';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,9 +43,10 @@ function Lista(props) {
 
 function ListaRecetas({listado}){
     return(
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName= "ListaRecetas">
             <Stack.Screen name="ListaRecetas" options={{ headerShown: false }}>{props => <Lista {...props} listado={listado} />}</Stack.Screen>
             <Stack.Screen name="DetalleReceta" >{props => <DetalleReceta {...props} listado={listado} />}</Stack.Screen>
+            <Stack.Screen name="ListaComentarios" component={ListaComentarios}/>
         </Stack.Navigator>
     );
 }
