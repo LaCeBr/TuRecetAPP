@@ -26,7 +26,6 @@ function RenderComentarioItem({comentario}) {
 
 function ContenidoComentario({comentarios}){
     
-    console.log(comentarios);
     if(!comentarios) {
         return (
             <Text>Todavía no hay valoraciones en esta receta</Text> 
@@ -62,7 +61,7 @@ const ListaComentarios = (props) => {
     const { route } = props;
     const { id_lista, titulo } = route.params;
     const comentarios = props.Comentarios.comentarios[id_lista];
-    console.log(comentarios);
+    console.log(props.Comentarios.comentarios);
 
     return(
         <ScrollView ref={useRef(null)}>

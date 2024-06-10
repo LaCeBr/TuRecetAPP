@@ -8,6 +8,19 @@ export const Comentarios = (state = { errMess: null, comentarios:[]}, action) =>
         case ActionTypes.COMENTARIOS_FAILED:
             return {...state, isLoading: false, errMess: action.payload};
 
+        case ActionTypes.NUEVO_COMENTARIO:
+            const { receta_id, usuario_id, valoracion } = action.payload;
+            return {
+                ...state,
+                comentarios: {
+                    ...state.comentarios,
+                    [receta_id]: {
+                        ...state.comentarios[receta_id],
+                        [usuario_id]: valoracion
+                    }
+                }
+            };
+
         default:
             return state;
     }

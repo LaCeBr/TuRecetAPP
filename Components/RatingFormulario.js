@@ -4,8 +4,8 @@ import { Input, Button, Icon } from '@rneui/themed';
 import { Rating } from 'react-native-ratings';
 //import { baseUrl } from '../comun/comun'; 
 import axios from 'axios';
-//import { addComentarios } from '../redux/ActionCreators';
 import { connect } from 'react-redux';
+import { nuevoComentario } from '../Redux/ActionCreators';
 
 /*
 mapStateToProps = state => { 
@@ -16,44 +16,28 @@ mapStateToProps = state => {
 */
 
 const mapDispatchToProps = dispatch => ({
-    addComentarios: (comentario) => dispatch(addComentarios(comentario))
+    nuevoComentario: (receta_id, usuario_id, valoracion) => dispatch(nuevoComentario(receta_id, usuario_id, valoracion))
 });
 
-const RatingFormulario = ({ toggleModal, excursionId, addComentarios }) => {
+const RatingFormulario = ({ toggleModal, RecetaId, nuevoComentario }) => {
     const [rating, setRating] = useState(5);
-    const [nombre, setNombre] = useState('');
+    const [nombre, setNombre] = useState('Probador');
     const [comentario, setComentario] = useState('');
 
     const handleCancel = () => {
         setRating(5);
-        setNombre('');
         setComentario('');
         toggleModal();
     };
 
     const handleSubmit = async () => {
         //Creamos estructura del comentario de acuerdo a la base de datos
-        const nuevoComentario = {
-            excursionId: excursionId,
-            valoracion: rating,
-            comentario: comentario,
-            autor: nombre,
-            dia: new Date().toISOString(),
+        const valoracion = {
+            Puntuacion: rating,
+            Comentario: comentario,
         };
-        /*//Conectamos con la base de datos e introducimos nuevo comentario
-        try {
-            const response = await axios.post(baseUrl+'comentarios', nuevoComentario);
-            if (response.status === 201) {
-                console.log('Comentario enviado con éxito');
-                const comentarioConId = { ...nuevoComentario, id: response.data.id };
-                addComentarios(comentarioConId);
-                //onComentarioEnviado(nuevoComentario);
-            } else {
-                console.error('Hubo un problema al enviar el comentario');
-            }
-        } catch (error) {
-            console.error(error);
-        }*/
+
+        nuevoComentario(RecetaId, nombre, valoracion);
         
         //Valores por defecto y cerrar
         handleCancel();

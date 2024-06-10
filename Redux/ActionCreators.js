@@ -32,6 +32,11 @@ export const addComentarios = (comentarios) => ({
     payload: comentarios
 });
 
+export const nuevoComentario = (receta_id, usuario_id, valoracion) => ({
+    type: ActionTypes.NUEVO_COMENTARIO,
+    payload: {receta_id, usuario_id, valoracion}
+});
+
 export const fetchRecetas = () => (dispatch) => {
     return fetch(datosURL + 'Recetas.json')
     .then(response => {
