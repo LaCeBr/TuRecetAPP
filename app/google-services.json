@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "753282151970",
+    "firebase_url": "https://tureceptapp-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tureceptapp",
+    "storage_bucket": "tureceptapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753282151970:android:31f36e5ea3320a6b06fc7b",
+        "android_client_info": {
+          "package_name": "com.DSM2024.TuRecetAPP"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "753282151970-6t7jdqo0h5da4e7jc0i08ekotcf8int3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCALEvuNrthWPib_PZMtK9Fxed81ZjhzHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "753282151970-3ai1foojtjgj5ng83u09n98vihbc93lf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
