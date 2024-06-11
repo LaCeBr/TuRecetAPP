@@ -1,30 +1,62 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ListaRecetas from "../../Components/ListaRecetas";
-import { Text } from 'react-native';
+import { Modal, Text, View } from 'react-native';
 import { connect } from 'react-redux';
+import NuevaReceta from '../../Components/NuevaReceta'
+import { Button } from '@rneui/themed';
 
 mapStateToProps = state => { 
     return { 
         Recetas: state.Recetas.recetas,
-        Propias: state.Recetas.recetas.filter(receta => receta.autor === 'Bego'), 
+        Propias: state.Recetas.recetas.filter(receta => receta.autor === 'Pepe'), 
         Comentarios: state.Comentarios
     } 
 } 
 
-const MisCreaciones = (props) => {
+function RenderLista({Propias}){
     
-    if (props.Recetas.length==0){
-        return(
-            <Text style={{margin:"auto"}}>No hay conexión con la base de datos</Text>
-        )
-    }else if (props.Propias.length==0){
+    if (Propias.length==0){
         return(
             <Text style={{margin:"auto"}}>Todavía no tienes recetas creadas</Text>
         )
     }else{
         return (
-            <ListaRecetas listado={props.Propias} />
+            <ListaRecetas listado={Propias} />
         );        
+    }
+
+}
+
+const MisCreaciones = (props) => {
+
+    const [plantillaReceta, setPlantillaReceta] = useState(false);
+    
+    const toggleReceta = () => {
+        setPlantillaReceta(!plantillaReceta);
+    };
+
+    if (props.Recetas.length==0){
+        return(
+            <Text style={{margin:"auto"}}>No hay conexión con la base de datos</Text>
+        )
+    }else{
+        return(
+            <View>
+                <Button onPress={toggleReceta}>"Crear Receta"</Button>
+                <RenderLista Propias={props.Propias}/>
+                <Modal 
+                    visible={plantillaReceta}
+                    animationType="slide"
+                    transparent={true}
+                    onRequestClose={toggleReceta}>
+                    <View style={{flex: 1,
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        width: '100%'}}>
+                        <NuevaReceta toggleReceta={toggleReceta} />
+                    </View>
+                </Modal> 
+            </View>
+        );
     }
 }
 
