@@ -1,6 +1,6 @@
 import * as ActionTypes from './ActionTypes';
 
-export const Usuario = (state = { errMess: null, usuario:[]}, action) => {
+export const Usuario = (state = { errMess: null, usuario:["pepe"]}, action) => {
     switch (action.type) {
         case ActionTypes.ADD_USUARIO:
             return {...state, errMess: null, usuario: state.usuario.concat(action.payload)};

@@ -9,11 +9,11 @@ export const Recetas = (state = { errMess: null, recetas:[]}, action) => {
             return {...state, isLoading: false, errMess: action.payload};
 
         case ActionTypes.NUEVA_VALORACION:
-            const { RecetaId, valoracion } = action.payload;
+            const { RecetaId, Valoracion } = action.payload;
             return {
                 ...state,
                 recetas: state.recetas.map(receta => 
-                    receta.id === RecetaId ? { ...receta, valoracion: valoracion } : receta
+                    receta.id === RecetaId ? { ...receta, valoracion: Valoracion } : receta
                 )
             };
         default:

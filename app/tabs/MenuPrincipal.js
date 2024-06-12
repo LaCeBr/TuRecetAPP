@@ -19,7 +19,7 @@ const MenuPrincipal = (props) =>{
         )
     }else{
         return (
-            <ListaRecetas listado={RecetasDisponibles} />
+            <ListaRecetas />
         );        
     }
 }

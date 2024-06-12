@@ -21,7 +21,7 @@ function RenderLista({Propias}){
         )
     }else{
         return (
-            <ListaRecetas listado={Propias} />
+            <ListaRecetas />
         );        
     }
 

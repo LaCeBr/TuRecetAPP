@@ -4,6 +4,14 @@ import { SafeAreaView, FlatList } from 'react-native';
 import DetalleReceta from "./DetalleReceta";
 import Rating from './Rating';
 import ListaComentarios from './ListaComentarios';
+import { connect } from 'react-redux';
+import { ListItemAccordion } from '@rneui/base/dist/ListItem/ListItem.Accordion';
+
+mapStateToProps = state => { 
+    return { 
+        Recetas: state.Recetas.recetas
+    } 
+} 
 
 const Stack = createNativeStackNavigator();
 
@@ -41,7 +49,15 @@ function Lista(props) {
     );
 }
 
-function ListaRecetas({listado}){
+const ListaRecetas = (props) => {
+
+    if (!props.listado){
+        var listado = props.Recetas;
+        //console.log(listado);
+    }else{
+        var listado = props.listado;
+    }
+    
     return(
         <Stack.Navigator initialRouteName= "ListaRecetas">
             <Stack.Screen name="ListaRecetas" options={{ headerShown: false }}>{props => <Lista {...props} listado={listado} />}</Stack.Screen>
@@ -51,4 +67,4 @@ function ListaRecetas({listado}){
     );
 }
 
-export default ListaRecetas;
+export default connect(mapStateToProps)(ListaRecetas);
