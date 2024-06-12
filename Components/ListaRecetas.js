@@ -5,7 +5,6 @@ import DetalleReceta from "./DetalleReceta";
 import Rating from './Rating';
 import ListaComentarios from './ListaComentarios';
 import { connect } from 'react-redux';
-import { ListItemAccordion } from '@rneui/base/dist/ListItem/ListItem.Accordion';
 
 mapStateToProps = state => { 
     return { 

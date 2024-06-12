@@ -134,3 +134,13 @@ export const addRecetas = (recetas) => ({
     type: ActionTypes.ADD_RECETAS,
     payload: recetas
 });
+
+export const usuarioFailed = (errmess) => ({
+    type: ActionTypes.USUARIO_FAILED,
+    payload: errmess
+});
+
+export const addUsuario = (usuario) => ({
+    type: ActionTypes.ADD_USUARIO,
+    payload: usuario
+});
