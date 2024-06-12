@@ -53,6 +53,8 @@ const ListaRecetas = (props) => {
     if (!props.listado){
         var listado = props.Recetas;
         //console.log(listado);
+    }else if(!props.autor){
+        var listado = props.Recetas.filter(receta => receta.autor === props.autor)
     }else{
         var listado = props.listado;
     }

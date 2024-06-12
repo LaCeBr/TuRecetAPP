@@ -9,6 +9,13 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { Picker } from '@react-native-picker/picker';
 
+
+mapStateToProps = state => { 
+    return {  
+        Usuario:state.Usuario.usuario
+    } 
+}
+
 const mapDispatchToProps = dispatch => ({
     // nuevoComentario: (receta_id, usuario_id, valoracion, Puntuacion) => dispatch(nuevoComentario(receta_id, usuario_id, valoracion, Puntuacion))
 });
@@ -181,4 +188,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default connect(null, mapDispatchToProps)(NuevaReceta);
+export default connect(mapStateToProps, mapDispatchToProps)(NuevaReceta);
